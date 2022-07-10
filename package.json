@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --require ts-node/register __tests__/**/*.test.ts --exit",
+    "test": "mocha --require ts-node/register src/__tests__/**/*.test.ts --exit",
     "start": "ts-node src/server.ts",
     "dev": "tsnd --exit-child /src/server.ts"
   },
