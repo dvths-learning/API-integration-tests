@@ -40,7 +40,8 @@ describe('GET /user', () => {
       expect(body).to.be.an('array'); // testa se o body da resposta é um array
       expect(body).to.be.deep.equal(fakeData.get.response); // testa se o body é estritamente igual ao esperado
       // testa se Logger.save foi chamado como: Logger.save('getAll() success')
-      expect((Logger.save as sinon.SinonStub).calledWith('getAll() success')).to.be.true;
+      expect((Logger.save as sinon.SinonStub).calledWith('getAll() success')).to
+        .be.true;
     });
   });
 
@@ -71,7 +72,80 @@ describe('GET /user', () => {
       expect(status).to.be.equal(500);
       expect(body).to.have.property('error');
       expect(body.error.message).to.be.equal('db error');
-      expect((Logger.save as sinon.SinonStub).calledWith('getAll() fail')).to.be.true;
+      expect((Logger.save as sinon.SinonStub).calledWith('getAll() fail')).to.be
+        .true;
     });
   });
 });
+
+describe('PUT /user/:id', () => {
+  describe('caso o usuário exista', () => {
+    before(() => {
+      sinon
+        //{1}
+        .stub(UserRepository.prototype, 'update')
+        .resolves(fakeData.put.mock);
+      sinon
+        // {2}
+        .stub(UserRepository.prototype, 'getById')
+        .resolves(fakeData.put.getByIdMock);
+
+      sinon.stub(Logger, 'save').resolves();
+    });
+
+    after(() => {
+      //{3}
+      (UserRepository.prototype.update as sinon.SinonStub).restore();
+      (UserRepository.prototype.getById as sinon.SinonStub).restore();
+      (Logger.save as sinon.SinonStub).restore();
+    });
+
+    it('deve retornar o usuário atualizado e enviar status 200', async () => {
+      const { status, body } = await chai
+        .request(app)
+        .put('/user/2')
+        .send(fakeData.put.request); // o método `send` serve para evitar um body na requisição
+      expect(status).to.be.equal(200); // testa se o status é o esperado
+      expect(body).to.be.an('object'); // testa se a resposta é um objeto
+      expect(body).to.be.deep.equal(fakeData.put.response); // testa se o body é estritamente iqual ao que se espera
+      expect((Logger.save as sinon.SinonStub).calledWith('update() success')).to
+        .be.true; // testa se o Logger foi chamado corretmente
+    });
+  });
+
+  describe('caso o usuário não exista', () => {
+    before(() => {
+      sinon
+        .stub(UserRepository.prototype, 'update')
+        .resolves(fakeData.put.mock);
+      sinon.stub(UserRepository.prototype, 'getById').resolves(null);
+      sinon.stub(Logger, 'save').resolves();
+    });
+    after(() => {
+      (UserRepository.prototype.update as sinon.SinonStub).restore();
+      (UserRepository.prototype.getById as sinon.SinonStub).restore();
+      (Logger.save as sinon.SinonStub).restore();
+    });
+
+    it('deve retornar a mensagem do erro e enviar status 404', async () => {
+      const { status, body } = await chai
+        .request(app)
+        .put('/user/9999')
+        .send(fakeData.put.mock);
+
+      expect(status).to.be.equal(404);
+      expect(body).to.have.property('error');
+      expect(body.error.message).to.be.equal('user not found');
+      expect((Logger.save as sinon.SinonStub).calledWith('update() fail')).to.be
+        .true;
+    });
+  });
+});
+
+/*
+  Próximos passos:
+  - Criar outras rotas para a api e desenvolver testes para elas
+  - Manter o container Mysql para evitar falsos-positivos
+  - Em Post /user o service chama 2 metodos de repositório, então pense nisso quando criar mocks
+  - Alimente o `fakeData` com mais objetos
+*/
