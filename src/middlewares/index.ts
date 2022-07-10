@@ -47,7 +47,7 @@ export default class Middlewares {
     next();
   };
 
-  public static _updateValidation: RequestHandler = (req, _res, next) => {
+  public static updateValidation: RequestHandler = (req, _res, next) => {
     const {
       email,
       firstName,
