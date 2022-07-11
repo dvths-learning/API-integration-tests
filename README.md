@@ -29,3 +29,9 @@ docker container run -d -e MYSQL_ROOT_PASSWORD=password -p 3336:3306 mysql:lates
 > Obs: O arquivo .env está incluso com a definição da variável de ambiente. 
 
 - Rode os testes com `npm test`
+
+## Próximos passos
+
+[ ] - Criar outras rotas para a api e desenvolver testes para elas
+[ ] - Desenvolver testes unitários com cobertura 85% 
+[ ] - Alimente o `fakeData` com mais objetos
