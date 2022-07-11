@@ -23,7 +23,7 @@ Este é um estudo sobre testes de integração. Os testes são realizados sobre 
 - Inicie um container docker de MySQL (recomendado)
 
 ```
-docker container run -d -e MYSQL_ROOT_PASSORD=password -p 3336:3306 mysql:latest
+docker container run -d -e MYSQL_ROOT_PASSWORD=password -p 3336:3306 mysql:latest
 ```
 
 > Obs: O arquivo .env está incluso com a definição da variável de ambiente. 
